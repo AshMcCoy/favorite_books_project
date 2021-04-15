@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Favorite Books</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container m-3">
+        <ul class="nav justify-content-end">
+            <li class="nav-item">
+                <a href="/user/logout" role="button" class="nav-link active btn btn-primary" aria current="page">Log Out</a>
+            </li>
+        </ul>
+        <h1 class="border-bottom border-dark border-2">Welcome, {{this_user.first_name}}!</h1>
+        <div class="row m-5">
+            <div class="col-5 m-3 border border-primary">
+                <h3 class="m-3">Add a Favorite Book</h3>
+                {% if messages %}
+                <ul>
+                    {% for message in messages %}
+                        <li class="text-danger">{{message}}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                <form action="/books/create_book" method="POST" class="m-3">
+                {% csrf_token %}
+                    <label for="title" class="form-label fw-bold">Title</label>
+                    <input type="text" class="form-control" name="title">
+                    <label for="description" class="form-label fw-bold">Description</label>
+                    <textarea name="description" class="form-control"></textarea>
+                    <button class="mt-3 btn btn-primary">Add</button>
+                </form>
+            </div>
+            <div class= "col-5 m-3 border border-primary">
+                <h3 class="m-3">All Books</h3>
+                {% for book in books %}
+                {% if this_user in book.users_who_like.all %}
+                    <h5><a href="/books/{{book.id}}">{{book.title}}</a></h5>
+                    <p>(added by {{book.uploaded_by.first_name}} {{book.uploaded_by.last_name}})</p>
+                    <p class="fst-italic text-muted border-bottom border-dark border-2">this is one of your favorites</p>
+                {% else %}
+                    <h5><a href="/books/{{book.id}}">{{book.title}}</a></h5>
+                    <p>(added by {{book.uploaded_by.first_name}} {{book.uploaded_by.last_name}})</p>
+                    <p class="border-bottom border-dark border-2"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="red" class="bi bi-star-fill" viewBox="0 0 16 16"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg><a href="/books/{{book.id}}/favorite" class="link-danger"> Add to Favorites</a></p>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>    
+</body>
+</html>
